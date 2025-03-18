@@ -1,0 +1,89 @@
+\documentclass[ascii]{abook}
+
+% Allowed text encodings: ascii, koi8-r, koi8-u, cp1251, utf-8.
+
+% Some frequently used packages are loaded by the class.
+% If you need a package that is not loaded, you should load it here.
+
+\begin{document}
+
+
+% Please use this template to prepare your abstract.
+% Please note that it should not exceed one page.
+% The file should be renamed using family names of first two coauthors as in the following example: {Doe-Doe.tex}.
+
+% Both TeX and PDF files of your abstract should be sent to {xiv.iacu@gmail.com}
+
+\begin{abstract}
+
+% You should define custom commands here.
+
+% The language of the abstract.
+% Allowed choices: english, ukrainian.
+\selectlanguage{english}
+
+\title{MoA+: Mixture of Autoencoders with Varying Concentrations for Enhanced Image Clustering}
+
+% Syntax of the \author command:
+% \author[Short name]{Full name}{Affiliation}{e-mail}
+% <Short name> --- initials of the first name and the last name.
+% It will be used in the table of contents and the index.
+% <Full name> --- name in the complete form preferred by the author, i.e. the first name and the last name.
+% <Affiliation> --- author's affiliation.
+% <e-mail> --- author's e-mail address.
+
+% <Affiliation> and <e-mail> may be left blank.
+
+% You should use \\* (star is mandatory) in the arguments of
+% \title and \author to insert line break.
+
+\author[V. ~Miroshnychenko]{Vitaliy Miroshnychenko}
+{Taras Shevchenko National University of Kyiv, Kyiv, Ukraine.}
+{vitaliy.miroshnychenko@knu.ua}
+\author[V.~Tunik]{Vadym Tunik}
+{Taras Shevchenko National University of Kyiv, Kyiv, Ukraine.}
+{tunik.vadym@knu.ua}
+
+\maketitle
+
+% The text of the abstract.
+% Avoid bold fonts in the text.
+
+In this paper, we consider the improvement of the vanilla Mixture of Experts model \cite{hinton1991} for unsupervised image clustering by introducing a mixture with varying concentrations. This addresses expert dominance, enhancing training balance and clustering performance. 
+
+The model is tested on the MNIST dataset, a benchmark of $n$ grayscale handwritten digit images $X_i, i=\overline{1,n}$, treated as a mixture with $M = 2$ components. 
+
+In the MoA+ framework, each trainable expert is a convolutional autoencoder (CAE), similar to simplified U-Net or SegNet, where image $X_i$ is reconstructed into image $\hat{X}_{i,k}$ using $k$-th CAE with MSE error. A trainable convolutional gate network assigns mixing probabilities $P_n=(p_{i:n}^k)_{i=1,k=1}^{n,M}$, where $p_{i:n}^k$ is the probability of the image $i$ to belong to component $k$, clustering images by selecting the most suitable CAE. 
+
+To address expert imbalance, MoA+ uses a modified loss function inspired by k-means, incorporating minimax weights $A_n=(a_{i:n}^k)_{i=1,k=1}^{n,M}=(P_n^TP_n)^{-1}P_n= (\Gamma_n)^{-1}P_n$ \cite{maiboroda2020}:
+
+$$
+\text{loss} = \sum_{k=1}^{M} \sum_{i=1}^{n} a_{i:n}^k (X_i -\hat{X}_{i,k})^2  \leq \sqrt{\sum_{k=1}^{M} \frac{1}{\lambda_k^2}} \sqrt{ \sum_{k=1}^{M} \left( \sum_{i=1}^{n} p_{i:n}^k (X_i -\hat{X}_{i,k})^2 \right)^2 },
+$$
+
+where $\lambda_k$ are eigenvalues of matrix $\Gamma_n$. This regularizes the gate network, balancing expert contributions.
+
+Compared under identical conditions, the standard MoA achieved a Normalized Mutual Information (NMI) of $\sim0.08$, while MoA+ scored $\sim0.8$, showing significantly better clustering performance.
+
+
+
+% References (if you use any).
+\vspace{0.2cm}
+\hrule
+\vspace{0.1cm}
+\textbf{References}
+\vspace{0.1cm}
+\hrule
+
+
+\begin{thebibliography}{9}
+\bibitem{hinton1991}
+R. A. Jacobs, M. I. Jordan, S. J. Nowlan and G. E. Hinton, "Adaptive Mixtures of Local Experts," in Neural Computation, vol. 3, no. 1, pp. 79-87, March 1991, doi: 10.1162/neco.1991.3.1.79.
+
+\bibitem{maiboroda2020}
+Miroshnichenko V., Maiboroda R. "Asymptotic normality of modified LS estimator for mixture of nonlinear regressions". Modern Stochastics: Theory and Applications, Vol.7, Iss.4 pp. 435 - 448, - 2020
+\end{thebibliography}
+
+\end{abstract}
+
+\end{document}
